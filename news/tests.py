@@ -113,3 +113,8 @@ class NewsAppApiTest(TestCase):
             payload
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    """ Menghapus data image dummy untuk Testing """
+    def tearDown(self):
+        self.news.cover.delete(False)
+
