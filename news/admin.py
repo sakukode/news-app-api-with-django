@@ -3,8 +3,13 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
+# import helper timezone untuk mengeset waktu published_at
+from django.utils import timezone
+
 # import class model Category
 from .models import Category
+# import class model News
+from .models import News
 
 
 # Menambahkan modul Category ke Admin
@@ -59,3 +64,34 @@ class UserAdmin(UserAdmin):
 # Mendaftarkan ulang User Admin
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
+
+
+# Menambahkan modul News ke Admin
+class NewsAdmin(admin.ModelAdmin):
+    # Menampilkan kolom "title", "status", "user" dan "created_at" pada halaman News list di Admin
+    list_display = ('title', 'status', 'user', 'created_at')
+    # Menampilkan kolom "title", "content", "excerpt", "cover", "status", dan "categories" 
+    # pada halaman Add & Update News di Admin
+    fields = ('title', 'content', 'excerpt', 'cover', 'status', 'categories')
+    # Menambahkan fitur pencarian berdasarkan kolom "title"
+    search_fields = ['title']
+    # Menambahkan fitur filter data berdasarkan kolom "status"
+    list_filter = ('status', )
+
+    # override method save_model untuk menyimpan data user dan published_at secara otomatis.
+    def save_model(self, request, obj, form, change):
+        # menyimpan kolom "user" berdasarkan user yang login
+        if not obj.user_id:
+            obj.user = request.user
+
+        if form.cleaned_data.get('status') == 1:
+            # mengeset kolom "published_at" dengan nilai null jika status bernilai 1 (draft)
+            obj.published_at = None
+        else:
+            # mengeset kolom "published_at" dengan tanggal&waktu sekarang jika status bernilai 2 (published)
+            obj.published_at = timezone.now()
+
+        obj.save()
+
+# Mendaftarkan NewsAdmin
+admin.site.register(News, NewsAdmin)
