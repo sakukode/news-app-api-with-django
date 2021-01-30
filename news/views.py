@@ -3,6 +3,10 @@ from django.http import Http404
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
+# import class untuk otentikasi rest api
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+
 # import class models dari aplikasi newsapp
 from .models import Category, News, Comment
 # import class serializers dari aplikasi newsapp
@@ -30,6 +34,9 @@ class CategoryListView(ListAPIView):
     ordering_fields = ['name', 'created_at']
     # mengeset fields/kolom default untuk fitur ordering
     ordering = ['created_at']
+    # menambahkan otentikasi
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = [TokenAuthentication]
 
 
 # Membuat View untuk API endpoint "Get Detail of Category"
@@ -38,6 +45,9 @@ class CategoryDetailView(RetrieveAPIView):
     # mengeset class serializers
     serializer_class = CategoryDetailSerializer
     queryset = Category.objects.all()
+    # menambahkan otentikasi
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = [TokenAuthentication]
  
 
 # Membuat View untuk API endpoint "Get List of News"
@@ -60,6 +70,9 @@ class NewsListView(ListAPIView):
     ordering_fields = ['title', 'created_at']
     # mengeset fields/kolom default untuk fitur ordering
     ordering = ['created_at']
+    # menambahkan otentikasi
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = [TokenAuthentication]
 
 
 # Membuat View untuk API endpoint "Get Detail of News"
@@ -68,6 +81,9 @@ class NewsDetailView(RetrieveAPIView):
     serializer_class = NewsDetailSerializer
     # mengambil data news/berita yang hanya berstatus published
     queryset = News.objects.is_published()
+    # menambahkan otentikasi
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = [TokenAuthentication]
 
 
 # Membuat View untuk API endpoint "Create New Comment on News"
@@ -75,6 +91,9 @@ class NewsDetailView(RetrieveAPIView):
 class NewsCreateCommentView(CreateAPIView):
     serializer_class = CommentFormSerializer
     queryset = Comment.objects.all()
+    # menambahkan otentikasi
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = [TokenAuthentication]
 	# meng-override method perform_create untuk mengambil news_id dari parameter url API endpoint
 	# Kemudian disimpan pada kolom news_id di tabel Comment pada saat kita melakukan requets endpoint ini.
     def perform_create(self, serializer):
