@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     # package untuk fitur filtering pada rest api
     'django_filters',
+    # package untuk integrasi tool dokumentasi api
+	'drf_yasg',
     # package aplikasi kita
     'news.apps.NewsConfig',
     'django.contrib.admin',
@@ -139,4 +141,15 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
+}
+
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'api_key': {
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'Authorization'
+        }
+    },
 }
