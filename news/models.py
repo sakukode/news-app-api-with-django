@@ -16,7 +16,13 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
-
+    
+# Membuat Custom Manager untuk NewsModel
+class NewsManager(models.Manager):
+    def is_published(self):
+        return super().get_queryset().filter(status=News.NewsStatus.published)
+    
+    
 # Model untuk tabel news
 class News(models.Model):
     class NewsStatus(models.IntegerChoices):
@@ -35,6 +41,9 @@ class News(models.Model):
     # set relasi ke tabel user and category
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     categories = models.ManyToManyField(Category)
+    
+    # Menambahkan NewsManager
+    objects = NewsManager()
 
     # set nama tabel
     class Meta:
